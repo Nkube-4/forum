@@ -1,0 +1,36 @@
+<%- include("partials/header"); %>
+
+
+<div class="container px-5">
+   <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+         <li class="breadcrumb-item active" aria-current="page">Home</li>
+      </ol>
+   </nav>
+   <% if(forums) { %>
+      <% forums.forEach(function(forum) { %>
+         
+         <div class="card mb-3">
+            <div class="card-body">
+               <h5 class="card-title"><a href="/forums/<%= forum._id %>/1"><%= forum.forumName %></a></h5>
+               <h6 class="card-subtitle mb-2 text-muted"><%= forum.createdAt.toLocaleDateString("en-GB") %></h6>
+               <p class="card-text">
+                  <%= forum.description %>
+               </p>
+               <% if(user && (user.isAdmin === true)) { %>
+                  <a class="btn btn-warning btn-sm editBtn" href="/forums/<%= forum._id %>/edit">Edit</a>
+                  <form class="d-inline-block" action="/forums/<%= forum._id %>?_method=DELETE" method="POST">
+                     <input type="submit" class="btn btn-danger btn-sm" value="Delete">
+                  </form>
+               <% } %>
+            </div>
+         </div>
+      <% }) %>
+   <% } %>
+
+   <% if(user && (user.isAdmin === true)) { %>
+   <a class="btn btn-primary btn-sm createBtn" href="/forums/new">Create Forum</a>
+   <% } %>
+</div>
+
+<%- include("partials/footer"); %>

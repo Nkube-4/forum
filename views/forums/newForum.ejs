@@ -1,0 +1,25 @@
+<%- include("../partials/header"); %>
+
+
+<div class="container-fluid w-50">
+   <form class="d-flex flex-column justify-content-center" action="/forums" method="POST">
+      <div class="form-group">
+         <label>Forum Name</label>
+         <input
+            type="text"
+            class="form-control"
+            name="forum[forumName]"
+         />
+      </div>
+      <div class="form-group mb-4">
+         <label>Description</label>
+         <input type="text" class="form-control" name="forum[description]"/>
+      </div>
+      <div class="form-group">
+         <button type="submit" class="btn btn-primary btn-block createBtn">Create</button>
+      </div>
+   </form>
+</div>
+
+
+<%- include("../partials/footer"); %>

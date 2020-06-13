@@ -1,0 +1,39 @@
+<%- include("../partials/header"); %>
+
+
+<div class="container px-5">
+	
+		
+			<div class="list-group">
+				<% if(userData.posts.length > 0) { %>
+					<% userData.posts.forEach(post => { %>
+						<a href="/forums/<%= post._id %>/posts/<%= post.post._id %>/1" class="list-group-item list-group-item-action">
+							<div class="d-flex w-100 justify-content-between">
+								<h5 class="mb-1"><%= post.post.title %></h5>
+								<small><%= post.post.createdAt.toLocaleDateString("en-US") %></small>
+							</div>
+							<small>Forum: <%= post.forumName %></small>
+						</a>
+					<% }) %>
+				<% } %>
+			</div>
+		
+		<!-- <div class="col-7">
+
+			<div class="list-group">
+				<% userData.comments.forEach(comment => { %>
+				<a href="#" class="list-group-item list-group-item-action">
+					<div class="d-flex w-100 justify-content-between">
+						<h5 class="mb-1">Comment: <%= comment.comments.text %></h5>
+						<small><%= comment.comments.createdAt.toLocaleDateString("en-US") %></small>
+					</div>
+
+					<small>Forum: <%= comment.forumName %> Post: <%= comment.posts.title %></small>
+				</a>
+				<% }) %>
+			</div>
+		</div> -->
+	
+</div>
+
+<%- include("../partials/footer"); %>

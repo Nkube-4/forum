@@ -1,0 +1,91 @@
+body {
+   background-color: #ffffff;
+}
+
+/* Navbar */
+
+.navbar nav {
+   background-color: #ffffff;
+}
+
+.navbar-light .navbar-brand {
+   color: #dc3545;
+}
+
+.navbar-light .navbar-nav .nav-link {
+   color: #dc3545;
+}
+
+/* Create button */
+
+.createBtn {
+   background-color: #45dc35;
+   border-color: #45dc35;
+   color: #fff;
+}
+
+.createBtn:hover {
+   background-color: #38b42a;
+   border-color: #38b42a;
+   color: #fff;
+}
+
+/* Edit button */
+
+.editBtn {
+   color: #fff !important;
+}
+
+/* Cards */
+
+.card {
+   /* background-color: #FFF4EE; */
+   border: 1px solid #dc3545;
+}
+
+h5 a{
+   color: #45dc35;
+}
+
+h5 a:hover{
+   color: #38b42a !important;
+}
+
+/* user profile */
+
+.list-group-item {
+   border: 1px solid #dc3545;
+}
+
+/* pagination */
+
+.page-link {
+   color: #45dc35 !important;
+}
+
+.page-item.active .page-link {
+   color: #fff !important;
+   background-color: #45dc35 !important;
+   border-color: #45dc35 !important;
+}
+
+/* breadcrumb */
+
+.breadcrumb {
+   background-color: #e5c0c2;
+}
+
+.breadcrumb-item a {
+   color: #45dc35 !important;
+   font-weight: bold;
+}
+
+/* #d4ba97
+
+#d3c119
+
+#ff7000
+
+#c80000
+
+#523a20 */

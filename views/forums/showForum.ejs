@@ -1,0 +1,106 @@
+<%- include("../partials/header"); %>
+
+<div class="container">
+	<% if(forum) { %>
+
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item mt-2"><a href="/">Home</a></li>
+			<li class="breadcrumb-item active mt-2" aria-current="page">
+				<%= forum.forumName %>
+         </li>
+         <form action="/forums/<%= forum._id %>/1" class="form-inline ml-auto my-lg-0" method="GET">
+			<input
+				class="form-control mr-sm-2"
+				type="search"
+				placeholder="Search for a post"
+            aria-label="Search"
+            name="search"
+			/>
+			<button class="btn createBtn my-2 my-sm-0" type="submit">
+				Search
+			</button>
+		</form>
+		</ol>
+		
+	</nav>
+	<% forum.posts.forEach(post => { %>
+	<div class="card mb-3">
+		<div class="card-body">
+			<h5 class="card-title">
+				<a href="/forums/<%= forum._id %>/posts/<%= post._id %>/1"
+					><%= post.title %></a
+				>
+			</h5>
+			<h6 class="card-subtitle mb-2 text-muted">
+				Created by <%= post.author.username %> on <%= new
+				Date(post.createdAt).toLocaleDateString("en-GB") %>
+			</h6>
+			<!-- <p class="card-text">
+                  <%= post.text %>
+               </p> -->
+		</div>
+	</div>
+	<% }) %>
+
+	<div class="container d-flex justify-content-around mb-2">
+		<a
+			class="btn btn-primary btn-md createBtn"
+			href="/forums/<%= forum._id %>/posts/new"
+		>
+			Add post
+		</a>
+
+		<% if(forum.totalPages > 0) { %>
+		<ul class="pagination justify-content-center mb-0">
+			<% if(forum.totalPages <= 5) { %> <% for(let i=1; i <= forum.totalPages; i++)
+			{ %> <% if(forum.currentPage == i) { %>
+			<li class="page-item active disabled">
+				<a class="page-link" href="/forums/<%= forum._id %>/<%= i %>"><%= i %></a>
+			</li>
+			<% } else { %>
+			<li class="page-item">
+				<a class="page-link" href="/forums/<%= forum._id %>/<%= i %>"><%= i %></a>
+			</li>
+			<% } %> <% } %> <% } %> <% if(forum.totalPages > 5) { %> 
+			<% if(forum.currentPage == 1) { %>
+			<li class="page-item disabled"><a class="page-link">First</a></li>
+			<% } else { %>
+			<li class="page-item">
+				<a class="page-link" href="/forums/<%= forum._id %>/1">First</a>
+			</li>
+			<% } %> 
+			<% var i = (Number(forum.currentPage) > 5 ? Number(forum.currentPage)
+			- 4 : 1) %> 
+			<% if (i !== 1) { %>
+			<li class="disabled"><a class="page-link">...</a></li>
+			<% } %> 
+			<% for (; i <= (Number(forum.currentPage) + 4) && i <=
+			forum.totalPages; i++) { %> 
+			<% if (i == forum.currentPage) { %>
+			<li class="page-item active"><a class="page-link"><%= i %></a></li>
+			<% } else { %>
+			<li class="page-item"><a class="page-link" href="<%= i %>"><%= i %></a></li>
+			<% } %> 
+				<% if (i == Number(forum.currentPage) + 4 && i < forum.totalPages) {
+				%>
+				<li class="page-item disabled"><a class="page-link">...</a></li>
+				<% } %> 
+			<% } %> 
+			<% if (forum.currentPage == forum.totalPages) { %>
+			<li class="page-item disabled"><a class="page-link">Last</a></li>
+				<% } else { %>
+				<li class="page-item">
+					<a class="page-link" href="/forums/<%= forum._id %>/<%= forum.totalPages %>"
+						>Last</a
+					>
+				</li>
+				<% } %> 
+			<% } %>
+		</ul>
+		<% } %>
+	</div>
+	<% } %>
+</div>
+
+<%- include("../partials/footer"); %>

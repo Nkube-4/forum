@@ -1,0 +1,106 @@
+<%- include("../partials/header"); %>
+
+
+<div class="container">
+      <nav aria-label="breadcrumb">
+         <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/forums/<%= forumId %>/1"><%= forumName %></a></li>
+            <li class="breadcrumb-item active" aria-current="page"><%= post.title %></li>
+         </ol>
+      </nav>
+
+      <div class="card mb-5">
+         <div class="card-body">
+            <h5 class="card-title"><a href="#"><%= post.title %></a></h5>
+            <h6 class="card-subtitle text-muted">Created by <%= post.author.username %> on <%= new Date(post.createdAt).toLocaleDateString("en-GB") %></h6>
+            <p class="card-text">
+               <%= post.text %>
+            </p>
+            <% if(user) { %>
+               <% if(user && (post.author._id.equals(user._id)) || user.isAdmin || user.isMod) { %>
+                  <a class="btn btn-warning btn-md editBtn" href="/forums/<%= forumId %>/posts/<%= post._id %>/edit">Edit</a>
+                  <form class="d-inline-block" action="/forums/<%= forumId %>/posts/<%= post._id %>?_method=DELETE" method="POST">
+                     <button class="btn btn-danger btn-md" type="submit">Delete</button>
+                  </form>
+               <% } %>
+            <% } %>
+         </div>
+      </div>
+
+      
+      <% post.comments.forEach(comment =>{ %>
+         <div class="card mb-3">
+            <div class="card-body">
+               <h5 class="card-title"><a href="#"><%= comment.author.username %></a></h5>
+               <h6 class="card-subtitle mb-2 text-muted"> <%= new Date(comment.createdAt).toLocaleDateString("en-GB") %></h6>
+               <p class="card-text">
+                  <%= comment.text %>
+               </p>
+               <% if(user) { %>
+                  <% if(user && (comment.author._id.equals(user._id)) || user.isAdmin || user.isMod) { %>
+                     <a class="btn btn-warning btn-md editBtn" href="/forums/<%= forumId %>/posts/<%= post._id %>/comments/<%= comment._id %>/edit">Edit</a>
+                     <form class="d-inline-block" action="/forums/<%= forumId %>/posts/<%= post._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
+                        <button class="btn btn-danger btn-md" type="submit">Delete</button>
+                     </form>
+                  <% } %>
+               <% } %>
+            </div>
+         </div>
+      <% }) %>
+
+      <!-- comments should be printed here -->
+
+      <div class="container d-flex justify-content-around mb-2">
+      <a class="btn btn-primary btn-md createBtn" href="/forums/<%= forumId %>/posts/<%= post._id %>/comments/new">Add comment</a>
+      <% if(post.totalPages > 0) { %>
+      <ul class="pagination justify-content-center mb-0">
+         <% if(post.totalPages <= 5) { %>
+            <% for(let i=1; i <= post.totalPages; i++) { %>
+               <% if(post.currentPage == i) { %>
+                  <li class="page-item active disabled">
+                     <a class="page-link" href="/forums/<%= forumId %>/posts/<%= post._id %>/<%= i %>"><%= i %></a>
+                  </li>
+               <% } else { %>
+                  <li class="page-item">
+                     <a class="page-link" href="/forums/<%= forumId %>/posts/<%= post._id %>/<%= i %>"><%= i %></a>
+                  </li>
+               <% } %>
+            <% } %>
+         <% } %>
+   
+         <% if(post.totalPages > 5) { %>
+            <% if (post.currentPage == 1) { %>
+               <li class="page-item disabled"><a class="page-link">First</a></li>
+            <% } else { %>
+               <li class="page-item"><a class="page-link" href="/forums/<%= forum._id %>/posts/<%= post._id %>/1">First</a></li>
+            <% } %>
+            <% var i = (Number(post.currentPage) > 5 ? Number(post.currentPage) - 4 : 1) %>
+            <% if (i !== 1) { %>
+               <li class="disabled"><a class="page-link">...</a></li>
+            <% } %>
+            <% for (; i <= (Number(post.currentPage) + 4) && i <= post.totalPages; i++) { %>
+               <% if (i == post.currentPage) { %>
+                     <li class="page-item active"><a class="page-link"><%= i %></a></li>
+               <% } else { %>
+                     <li class="page-item"><a class="page-link" href="<%= i %>"><%= i %></a></li>
+               <% } %>
+               <% if (i == Number(post.currentPage) + 4 && i < post.totalPages) { %>
+                     <li class="page-item disabled"><a class="page-link">...</a></li>
+               <% } %>
+            <% } %>
+            <% if (post.currentPage == post.totalPages) { %>
+               <li class="page-item disabled"><a class="page-link">Last</a></li>
+            <% } else { %>
+               <li class="page-item"><a class="page-link" href="/forums/<%= forumId %>/posts/<%= post._id %>/<%= post.totalPages %>">Last</a></li>
+            <% } %>
+         <% } %>
+         
+      </ul>
+      <% } %>
+   </div>
+
+   
+</div>
+
+<%- include("../partials/footer"); %>
