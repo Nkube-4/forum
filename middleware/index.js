@@ -20,7 +20,9 @@ middlewareObj.isAdmin = function(req, res, next) {
 }
 
 middlewareObj.isPostOwner = function(req, res, next) {
+   console.log("in middleware postOwner");
    if(req.isAuthenticated()) {
+      
       if(req.user.isAdmin || req.user.isMod) {
          console.log("is admin or mod");
          return next();

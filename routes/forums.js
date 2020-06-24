@@ -17,6 +17,7 @@ router.get("/forums", (req, res) => {
          console.log(err);
       } else {
          console.log(forums);
+         console.log(req.user);
          res.render("index", {forums});
       }
    });

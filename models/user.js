@@ -6,7 +6,11 @@ const userSchema = new mongoose.Schema({
    email: String,
    password: String,
    isAdmin: Boolean,
-   isMod: Boolean
+   isMod: Boolean,
+   avatar: {
+      avatarId: String,
+      avatarUrl: String
+   }
 }, {timestamps: true});
 
 

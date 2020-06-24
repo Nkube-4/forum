@@ -40,7 +40,7 @@ router.post("/forums/:forumId/posts/:postId/comments", middleware.isLoggedIn, (r
                post.save();
                console.log("created comment and saved it to post");
                req.flash("success", "Comment created");
-               res.redirect(`/forums/${req.params.forumId}/posts/${req.params.postId}`);
+               res.redirect(`/forums/${req.params.forumId}/posts/${req.params.postId}/1`);
             }
          });
       }

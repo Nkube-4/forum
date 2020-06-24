@@ -10,7 +10,10 @@ const postSchema = new mongoose.Schema({
       type: mongoose.Types.ObjectId,
       ref: "Comment"
    }],
-   imageUrl: String,
+   images: [{
+      imgId: String,
+      imgUrl: String
+   }],
    text: String
    // likes and attachments 
 }, {timestamps: true});

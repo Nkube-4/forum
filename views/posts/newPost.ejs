@@ -1,22 +1,41 @@
 <%- include("../partials/header"); %>
 
-
 <div class="container-fluid w-50">
 	<form
 		class="d-flex flex-column justify-content-center"
 		action="/forums/<%= forumId %>/posts"
 		method="POST"
+		enctype="multipart/form-data"
 	>
 		<div class="form-group">
 			<label>Title</label>
 			<input type="text" class="form-control" name="post[title]" />
 		</div>
-		<div class="form-group mb-4">
+		<div class="form-group mb-3">
 			<label>Content</label>
 			<input type="text" class="form-control" name="post[text]" />
 		</div>
+
+		<label for="">Images</label>
+		<div class="input-group mb-5 file-input">
+			<div class="custom-file">
+				<input
+					type="file"
+					class="custom-file-input"
+					id="inputGroupFile01"
+					aria-describedby="inputGroupFileAddon01"
+					name="images"
+					accept="image/*"
+					multiple
+				/>
+				<label class="custom-file-label" for="inputGroupFile01"></label>
+			</div>
+		</div>
+
 		<div class="form-group">
-			<button type="submit" class="btn btn-primary btn-block createBtn">Create</button>
+			<button type="submit" class="btn btn-primary btn-block createBtn">
+				Create
+			</button>
 		</div>
 	</form>
 </div>

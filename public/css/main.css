@@ -80,6 +80,92 @@ h5 a:hover{
    font-weight: bold;
 }
 
+/* file input */
+.custom-file-label {
+   height: 4rem;
+}
+
+.custom-file-label::after {
+   padding-top: 1rem;
+   height: 3.9rem;
+}
+
+/* post */
+
+.post {
+   border: 1px solid #dc3545;
+   border-radius: .25rem;
+   margin-bottom: 2rem;
+}
+
+.userInfo {
+   border-right: 1px solid #dc3545;
+   padding: 1rem;
+   display: flex;
+   flex-direction: column;
+   flex-wrap: nowrap;
+   align-items: center;
+}
+
+.userInfo img{
+   width: 5rem;
+   height: 5rem;
+   border-radius: 100px;
+   margin-bottom: .5rem;
+}
+
+.userInfo h5 {
+   color: #45dc35;
+}
+
+.postContent {
+   padding: 1rem;
+}
+
+.post_title {
+   display: flex;
+   justify-content: space-between;
+   margin-bottom: 1.5rem;
+}
+
+.post_title h5 {
+   color: #45dc35;
+}
+
+.postDescription {
+   text-align: center;
+   margin-bottom: 1.5rem;
+   font-size: 1.4rem;
+   font-weight: 500;
+}
+
+.postButtons {
+   text-align: center;
+}
+
+/* comment */
+
+.comment {
+   border: 1px solid #dc3545;
+   border-radius: .25rem;
+   margin-bottom: 2rem;
+}
+
+.commentDate {
+   margin-top: .5rem;
+   text-align: right;
+}
+
+.commentText {
+   font-size: 1.2rem;
+   font-weight: 500;
+   margin-bottom: 2rem;
+}
+
+.commentButtons {
+   text-align: center;
+}
+
 /* #d4ba97
 
 #d3c119

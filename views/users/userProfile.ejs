@@ -3,20 +3,71 @@
 
 <div class="container px-5">
 	
-		
-			<div class="list-group">
-				<% if(userData.posts.length > 0) { %>
-					<% userData.posts.forEach(post => { %>
-						<a href="/forums/<%= post._id %>/posts/<%= post.post._id %>/1" class="list-group-item list-group-item-action">
-							<div class="d-flex w-100 justify-content-between">
-								<h5 class="mb-1"><%= post.post.title %></h5>
-								<small><%= post.post.createdAt.toLocaleDateString("en-US") %></small>
+			<div class="row mb-5">
+
+				<div class="col-6">
+					<div class="list-group">
+						<div  class="list-group-item">
+							<div class="d-flex w-100 justify-content-center">
+								<h4 class="mb-1">Your Posts</h4>		
+							</div>			
+						</div>
+						<% if(userData.posts.length > 0) { %>
+							<% userData.posts.forEach(post => { %>
+								<a href="/forums/<%= post._id %>/posts/<%= post.post._id %>/1" class="list-group-item list-group-item-action">
+									<div class="d-flex w-100 justify-content-between">
+										<h5 class="mb-1"><%= post.post.title %></h5>
+										<small><%= post.post.createdAt.toLocaleDateString("en-US") %></small>
+									</div>
+									<small>Forum: <%= post.forumName %></small>
+								</a>
+							<% }) %>
+						<% } %>
+					</div>
+				</div>
+	
+				<div class="col-6 userSettingsForms">
+					<!-- username form -->
+					<form
+					class="d-flex flex-column justify-content-center mb-5"
+					action="/users/profile?_method=PUT"
+					method="POST"
+					enctype="multipart/form-data"
+					>
+						<div class="form-group">
+							<label>Username</label>
+							<input
+								type="text"
+								class="form-control"
+								name="username"
+								value="<%= user.username %>"
+							/>
+						</div>
+						
+						<label for="">Avatar</label>
+						<div class="input-group mb-5 file-input">
+							<div class="custom-file">
+								<input
+									type="file"
+									class="custom-file-input"
+									id="inputGroupFile01"
+									aria-describedby="inputGroupFileAddon01"
+									name="avatar"
+									accept="image/*"
+									multiple
+								/>
+								<label class="custom-file-label" for="inputGroupFile01"></label>
 							</div>
-							<small>Forum: <%= post.forumName %></small>
-						</a>
-					<% }) %>
-				<% } %>
+						</div>
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary btn-block createBtn">Update Profile</button>
+						</div>
+					</form>
+				</div>
+
 			</div>
+
+			
 		
 		<!-- <div class="col-7">
 

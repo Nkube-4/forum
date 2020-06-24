@@ -4,6 +4,30 @@ const Forum = require("../models/forum");
 const Post = require("../models/post");
 const Comment = require("../models/comment");
 const middleware = require("../middleware/index");
+const multer = require("multer");
+const cloudinary = require("cloudinary");
+// multer config
+const storage = multer.diskStorage({
+	filename: function (req, file, cb) {
+		cb(null, Date.now() + "-" + file.originalname);
+	},
+});
+let imageFilter = function (req, file, cb) {
+	if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+		return cb(new Error("Only image files are allowed!"), false);
+	}
+	cb(null, true);
+};
+const upload = multer({ storage: storage, fileFilter: imageFilter });
+// cloudinary config
+cloudinary.config({
+   cloud_name: process.env.CLOUD_NAME,
+   api_key: process.env.CLOUD_API_KEY,
+   api_secret: process.env.CLOUD_API_SECRET
+});
+
+
+
 
 router.get("/forums/:forumId/posts", (req, res) => {
    // show all posts
@@ -17,8 +41,19 @@ router.get("/forums/:forumId/posts/new", middleware.isLoggedIn, (req, res) => {
    // res.send("new post form route");
 });
 
-router.post("/forums/:forumId/posts", middleware.isLoggedIn, (req, res) => {
+router.post("/forums/:forumId/posts", middleware.isLoggedIn, upload.array("images", 4), async(req, res) => {
    // add new post
+   console.log(req.files);
+   let images = []; 
+   if(req.files) {
+      for(let i=0; i<req.files.length; i++){
+         let image = await uploadImage(req.files[i]);
+         images.push(image);
+      }
+   }
+
+   // console.log(images);
+
    Forum.findById(req.params.forumId, (err, forum) => {
 
       if(err || !forum) {
@@ -28,8 +63,10 @@ router.post("/forums/:forumId/posts", middleware.isLoggedIn, (req, res) => {
          let newPost = {
             title: req.body.post.title,
             text: req.body.post.text,
-            author: req.user._id
-         }
+            author: req.user._id,
+            images: images
+         };
+         console.log(newPost);
          Post.create(newPost, (err, post) => {
             if(err) {
                console.log(err);
@@ -39,7 +76,7 @@ router.post("/forums/:forumId/posts", middleware.isLoggedIn, (req, res) => {
                forum.save();
                console.log("forum saved with new post");
                req.flash("success", "Post created");
-               res.redirect(`/forums/${req.params.forumId}`);
+               res.redirect(`/forums/${req.params.forumId}/posts/${post._id}/1`);
             }
          });
 
@@ -69,32 +106,54 @@ router.get("/forums/:forumId/posts/:postId/:page", async(req, res) => {
    });
 });
 
-router.get("/forums/:forumId/posts/:postId/edit", middleware.isPostOwner, (req, res) => {
+router.get("/forums/:forumId/posts/:postId/1/edit", middleware.isPostOwner, (req, res) => {
    // show form to edit post
+   // console.log("edit form route");
    Post.findById(req.params.postId, (err, post) => {
       if(err || !post) {
          req.flash("error", "Oops not found");
          console.log(err);
       } else {
-         res.render("posts/editPost", {post, forumId: req.params.forumId});
+         // console.log("redirecting");
+         res.render("posts/editPost", {post: post, forumId: req.params.forumId});
       }
    });
    
    // res.send("edit post form route");
 });
 
-router.put("/forums/:forumId/posts/:postId", middleware.isPostOwner, (req, res) => {
+router.put("/forums/:forumId/posts/:postId", middleware.isPostOwner, upload.array("images", 4), async(req, res) => {
+   // upload new images
+   // console.log("in put route");
+   console.log(req.files);
+   let images = [];
+   if(req.files) {
+      for(let i=0; i<req.files.length; i++){
+         let image = await uploadImage(req.files[i]);
+         images.push(image);
+      }
+   }
+   req.body.post.images = images;   
+   console.log(req.body.post);
+
    // update a particular post
-   Post.findByIdAndUpdate(req.params.postId, req.body.post, (err, post) => {
-      if(err || !post) {
+   Post.findByIdAndUpdate(req.params.postId, req.body.post, async(err, result) => {
+      if(err || !result) {
          req.flash("error", "Oops not found");
          console.log(err);
       } else {
-         console.log(post);
+         console.log(result);
+         // delete old images
+         if(req.body.post.images.length > 0) {
+            for(let i=0; i<result.images.length; i++) {
+               await deleteImage(result.images[i]);
+               // console.log("deleted image");
+            }
+         }
          req.flash("success", "Post updated");
-         res.redirect(`/forums/${req.params.forumId}/posts/${req.params.postId}`);
+         res.redirect(`/forums/${req.params.forumId}/posts/${req.params.postId}/1`);
       }
-   })
+   });
 });
 
 router.delete("/forums/:forumId/posts/:postId", middleware.isPostOwner, (req, res) => {
@@ -107,6 +166,10 @@ router.delete("/forums/:forumId/posts/:postId", middleware.isPostOwner, (req, re
          console.log(post);
          // delete the comments on the post
          await deleteComments(post.comments);
+         // delete images
+         for(let i=0; i<post.images.length; i++){
+            await deleteImage(post.images[i]);
+         }
          // find the forum and update its post array
          Forum.findByIdAndUpdate(req.params.forumId, {$pullAll: {posts: [post._id]}}, (err, forum) => {
             if(err) {
@@ -135,6 +198,35 @@ function deleteComments(commentsArray) {
          resolve("comments deleted");
       });
    }
+}
+
+function uploadImage(image) {
+   return new Promise((resolve, reject) => {
+      cloudinary.v2.uploader.upload(image.path, (err, result) => {
+         if(err) {
+            reject(err);
+         } else {
+            let image = {
+               imgId: result.public_id,
+               imgUrl: result.secure_url
+            };
+            resolve(image);
+         }
+      });
+   });
+}
+
+function deleteImage(image) {
+   return new Promise((resolve, reject) => {
+      cloudinary.v2.uploader.destroy(image.imgId, (err, result) => {
+         if(err) {
+            reject(err);
+         } else {
+            console.log(result);
+            resolve("image deleted");
+         }
+      });
+   });
 }
 
 module.exports = router;
