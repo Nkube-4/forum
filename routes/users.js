@@ -114,7 +114,11 @@ router.put("/users/profile", upload.single("avatar"), async(req, res) => {
          console.log(err);
       } else {
          if(user.avatar) {
-            await deleteImage(user.avatar);
+            try {
+               await deleteImage(user.avatar);
+            } catch(err) {
+               console.log(err);
+            }
          }
          console.log("user updated");
          res.redirect("/users/profile");
