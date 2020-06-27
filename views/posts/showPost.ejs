@@ -117,7 +117,7 @@
 					<% if(!post.author.avatar.avatarUrl) { %>
 						<img src="https://res.cloudinary.com/dk0lvhahj/image/upload/v1592868936/defaultAvatar2_swuwzc.jpg" alt="">
 					<% } else { %>
-							<img src="<%= post.author.avatar.avatarUrl %>" alt="">
+							<img src="<%= comment.author.avatar.avatarUrl %>" alt="">
 					<% } %>
 						<h5><%= comment.author.username %></h5>
 				</div>
