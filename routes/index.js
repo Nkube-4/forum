@@ -25,15 +25,17 @@ router.post("/register", (req, res) => {
 	User.register(new User(user), req.body.password, function(err, user) {
 		if(err) {
 			console.log(err);
-			req.flash("error", err.message);
-			return res.redirect("/");
+			req.flash("error", "Username or email already registered");
+			return res.redirect("/register");
 		}
 
 		console.log(user);
 		console.log("registered");
 		// console.log(req);
-		passport.authenticate("local",{failureFlash: true})(req, res, function () {
+		passport.authenticate("local", {failureFlash: true,})(req, res, function () {
 			console.log("authenticated");
+			req.session.id = user._id;
+			req.flash("success", "Thanks for registering!");
 			res.redirect("/");
 		});
 	})
@@ -48,18 +50,24 @@ router.get("/login", (req, res) => {
 router.post(
 	"/login",
 	passport.authenticate("local", {
-		successRedirect: "/",
 		failureRedirect: "/login",
-		failureFlash: true
+		failureFlash: true,
+		failureFlash: "Wrong username or password.",
 	}),
 	(req, res) => {
 		// res.send("Login route");
+		console.log("login");
+		req.session.userId = req.user._id;
+		// console.log(req.session.userId);
+		// console.log(req.session);
+		res.redirect("/");
 	}
 );
 
 router.get("/logout", (req, res) => {
 	console.log("logged out");
 	req.logOut();
+	req.session.destroy();
 	res.redirect("/");
 	// res.send("Logout route");
 });

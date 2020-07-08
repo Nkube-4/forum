@@ -8,34 +8,38 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const flash = require("connect-flash");
 const strat = require("./middleware/newStrategy");
+const server = require("http").createServer(app);
+const io = require("socket.io")(server);
 
 
 mongoose.connect(process.env.DB_STRING_REMOTE, {useNewUrlParser: true, useUnifiedTopology: true});
 // routes 
-
 const index = require("./routes/index");
 const forums = require("./routes/forums");
 const posts = require("./routes/posts");
 const comments = require("./routes/comments");
 const users = require("./routes/users");
 
+
 app.use(express.static(__dirname + "/public"));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 
-
-app.use(
-	require("express-session")({
-		secret: process.env.SESSION_SECRET,
-		resave: false,
-		saveUninitialized: false,
-	})
-);
+const session = require("express-session");
+const mongoStore = require("connect-mongo")(session);
+const sessionMWare = session({
+	secret: process.env.SESSION_SECRET,
+	resave: false,
+	saveUninitialized: false,
+	store: new mongoStore({ url: process.env.DB_STRING_REMOTE }),
+});
+app.use(sessionMWare);
 app.use(passport.initialize());
 app.use(passport.session());
 
 const User = require("./models/user");
+
 
 passport.use(strat);
 passport.serializeUser(User.serializeUser());
@@ -74,5 +78,10 @@ app.use(function (req, res, next) {
 	res.type("txt").send("Not found");
 });
 
+io.use(function (socket, next) {
+	sessionMWare(socket.request, {}, next);
+});
+require("./socket")(io);
 
-app.listen(process.env.PORT, process.env.IP, () => console.log("Forum started"));
+server.listen(process.env.PORT, process.env.IP, () => console.log("Forum started"));
+
